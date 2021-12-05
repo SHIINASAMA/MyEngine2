@@ -4,29 +4,46 @@ namespace MyEngine2.Common.Logger
 {
     public class Event
     {
+        private static string UNKNOWN_FILE = "Unknown_File";
+
+        private static string UNKNOWN_THREAD = "Unknown_Thread";
+
         public Level Level { get; }
         public DateTime Time { get; }
-        public string FullFileName { get { return StackFrame.GetFileName() ?? "Unknown_File";} }
-        public string FileName {
-            get {
+
+        public string FullFileName
+        { get { return StackFrame.GetFileName() ?? UNKNOWN_FILE; } }
+
+        public string FileName
+        {
+            get
+            {
                 string? fileName = StackFrame.GetFileName();
-                if( fileName != null)
+                if (fileName != null)
                 {
                     int index = fileName.LastIndexOf('\\');
-                    if(index == -1)
+                    if (index == -1)
                     {
                         index = fileName.LastIndexOf('/');
                     }
                     return fileName.Substring(index + 1, fileName.Length - index - 1);
-                }else
+                }
+                else
                 {
-                    return "Unknown_File";
+                    return UNKNOWN_FILE;
                 }
             }
         }
-        public int LineNumber { get { return StackFrame.GetFileLineNumber();} }
-        public string ThreadName { get { return Thread.Name ?? "Unknown_Thread"; } }
-        public int ThreadId { get { return Thread.ManagedThreadId; } }
+
+        public int LineNumber
+        { get { return StackFrame.GetFileLineNumber(); } }
+
+        public string ThreadName
+        { get { return Thread.Name ?? UNKNOWN_THREAD; } }
+
+        public int ThreadId
+        { get { return Thread.ManagedThreadId; } }
+
         public string Message { get; }
 
         private StackFrame StackFrame;
@@ -40,7 +57,7 @@ namespace MyEngine2.Common.Logger
 
             Thread = Thread.CurrentThread;
 
-            var stackTrace = new StackTrace(1, true);
+            var stackTrace = new StackTrace(3, true);
             StackFrame = stackTrace.GetFrame(0) ?? new StackFrame();
         }
     }

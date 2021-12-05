@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MyEngine2.Common.Logger;
 
@@ -32,6 +33,42 @@ namespace MyEngine2.Test.Common
             Console.WriteLine(formatter.Format(@event1));
             Console.WriteLine(formatter.Format(@event2));
             Console.WriteLine(formatter.Format(@event3));
+        }
+
+        [TestMethod]
+        public void TestAppender()
+        {
+            Event @event = new Event(Level.ERROR, "This is a test");
+            ConsoleAppender consoleAppender = new ConsoleAppender(new Formatter());
+            consoleAppender.Append(@event);
+        }
+
+        private Logger logger = new Logger();
+
+        [TestMethod]
+        public void TestMyLogger()
+        {
+            Thread.CurrentThread.Name = "MainThread";
+            Formatter formatter = new("[%lv] %tm %tn %ti %fn:%ln - %m", "yyyy-MM-dd HH:mm:ss");
+            ConsoleAppender consoleAppender = new ConsoleAppender(formatter);
+
+            logger.AddAppender(consoleAppender);
+            logger.Debug("MainThread Message");
+            logger.Info("MainThread Message");
+            logger.Warn("MainThread Message");
+            logger.Error("MainThread Message");
+            logger.Fatal("MainThread Message");
+
+            Thread subThread = new Thread(new ThreadStart(ThreadProc));
+            subThread.Start();
+            subThread.Join();
+            logger.Info("MainThread Message");
+        }
+
+        public void ThreadProc()
+        {
+            Thread.CurrentThread.Name = "SubThread";
+            logger.Info("SubThread Message");
         }
     }
 }

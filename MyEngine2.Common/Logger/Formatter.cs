@@ -4,102 +4,107 @@ namespace MyEngine2.Common.Logger
 {
     public class Formatter
     {
-        public string Parttern { get; }
-        public string TimeParttern { get; }
+        public string Pattern { get; }
+        public string TimePattern { get; }
 
-        /**
-         * %% -> %
-         * %lv ->  level
-         * %tm -> time
-         * %m -> message
-         * %ff -> full file name
-         * %fn -> file name
-         * %ln -> line number
-         * %tn -> thread name
-         * %ti -> thread id
-         */
-
-        public Formatter(string parttern = "[%lv] %tm %m", string timeParttern = "HH:mm:ss")
+        /// <summary>
+        /// <para>对应 pattern 而言，可以使用以下占位符</para>
+        /// <para>% -> %\n</para>
+        /// <para>%lv ->  level</para>
+        /// <para>%tm -> time</para>
+        /// <para>%m -> message</para>
+        /// <para>%ff -> full file name</para>
+        /// <para>%fn -> file name</para>
+        /// <para>%ln -> line number</para>
+        /// <para>%tn -> thread name</para>
+        /// <para>%ti -> thread id</para>
+        /// </summary>
+        public Formatter(string pattern = "[%lv] %tm %m", string timePattern = "HH:mm:ss")
         {
-            Parttern = parttern;
-            TimeParttern = timeParttern;
+            Pattern = pattern;
+            TimePattern = timePattern;
         }
 
         public string Format(Event @event)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            for (int index = 0; index < Parttern.Length;)
+            for (int index = 0; index < Pattern.Length;)
             {
-                if (Parttern[index].Equals('%'))
+                if (Pattern[index].Equals('%'))
                 {
-                    switch (Parttern[++index])
+                    switch (Pattern[++index])
                     {
                         case '%':
                             stringBuilder.Append('%');
                             index++;
                             break;
+
                         case 'm':
                             stringBuilder.Append(@event.Message);
                             index++;
                             break;
+
                         case 'f':
-                            if (Parttern[index + 2].Equals('f'))
+                            if (Pattern[index + 1].Equals('f'))
                             {
                                 stringBuilder.Append(@event.FullFileName);
                             }
-                            else if (Parttern[index + 2].Equals('n'))
+                            else if (Pattern[index + 1].Equals('n'))
                             {
                                 stringBuilder.Append(@event.FileName);
                             }
                             else
                             {
-                                stringBuilder.Append("%f" + Parttern[index + 2]);
+                                stringBuilder.Append("%f" + Pattern[index + 1]);
                             }
                             index += 2;
                             break;
+
                         case 'l':
-                            if (Parttern[index + 1].Equals('v'))
+                            if (Pattern[index + 1].Equals('v'))
                             {
                                 stringBuilder.Append(LevelToString(@event.Level));
                             }
-                            else if (Parttern[index + 1].Equals('n'))
+                            else if (Pattern[index + 1].Equals('n'))
                             {
                                 stringBuilder.Append(@event.LineNumber);
                             }
                             else
                             {
-                                stringBuilder.Append("%l" + Parttern[index + 1]);
+                                stringBuilder.Append("%l" + Pattern[index + 1]);
                             }
                             index += 2;
                             break;
+
                         case 't':
-                            if (Parttern[index + 1].Equals('m'))
+                            if (Pattern[index + 1].Equals('m'))
                             {
-                                stringBuilder.Append(@event.Time.ToString(TimeParttern));
+                                stringBuilder.Append(@event.Time.ToString(TimePattern));
                             }
-                            else if (Parttern[index + 1].Equals('n'))
+                            else if (Pattern[index + 1].Equals('n'))
                             {
                                 stringBuilder.Append(@event.ThreadName);
                             }
-                            else if (Parttern[index + 1].Equals('i'))
+                            else if (Pattern[index + 1].Equals('i'))
                             {
                                 stringBuilder.Append(@event.ThreadId);
                             }
                             else
                             {
-                                stringBuilder.Append("%t" + Parttern[index + 1]);
+                                stringBuilder.Append("%t" + Pattern[index + 1]);
                             }
                             index += 2;
                             break;
+
                         default:
-                            stringBuilder.Append("%" + Parttern[index + 1]);
+                            stringBuilder.Append("%" + Pattern[index + 1]);
                             index += 2;
                             break;
                     }
                 }
                 else
                 {
-                    stringBuilder.Append(Parttern[index]);
+                    stringBuilder.Append(Pattern[index]);
                     index++;
                 }
             }
