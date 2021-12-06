@@ -18,7 +18,7 @@
             }
         }
 
-        public Logger(Level level = Level.INFO)
+        public Logger(Level level = Level.Info)
         {
             Level = level;
         }
@@ -30,27 +30,27 @@
 
         public void Debug(string message)
         {
-            Log(Level.DEBUG, message);
+            Log(Level.Debug, message);
         }
 
         public void Info(string message)
         {
-            Log(Level.INFO, message);
+            Log(Level.Info, message);
         }
 
         public void Warn(string message)
         {
-            Log(Level.WARN, message);
+            Log(Level.Warn, message);
         }
 
         public void Error(string message)
         {
-            Log(Level.ERROR, message);
+            Log(Level.Error, message);
         }
 
         public void Fatal(string message)
         {
-            Log(Level.FATAL, message);
+            Log(Level.Fatal, message);
         }
     }
 }

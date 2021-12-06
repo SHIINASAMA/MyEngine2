@@ -113,7 +113,7 @@ namespace MyEngine2.Common.Logger
 
         public static string LevelToString(Level level)
         {
-            if (level == Level.INFO || level == Level.WARN)
+            if (level == Level.Info || level == Level.Warn)
             {
                 return level.ToString() + ' ';
             }

@@ -11,7 +11,7 @@ namespace MyEngine2.Test.Common
         [TestMethod]
         public void TestEvent()
         {
-            Event @event = new Event(Level.DEBUG, "This is a test");
+            Event @event = new Event(Level.Debug, "This is a test");
             Console.WriteLine("Level: {0}", @event.Level);
             Console.WriteLine("Time: {0}", @event.Time);
             Console.WriteLine("Full File Name: {0}", @event.FullFileName);
@@ -25,9 +25,9 @@ namespace MyEngine2.Test.Common
         [TestMethod]
         public void TestFormatter()
         {
-            Event @event1 = new Event(Level.INFO, "This is a test");
-            Event @event2 = new Event(Level.WARN, "This is a test");
-            Event @event3 = new Event(Level.FATAL, "This is a test");
+            Event @event1 = new Event(Level.Info, "This is a test");
+            Event @event2 = new Event(Level.Warn, "This is a test");
+            Event @event3 = new Event(Level.Fatal, "This is a test");
 
             Formatter formatter = new Formatter("[%lv] %tm %m %%");
             Console.WriteLine(formatter.Format(@event1));
@@ -38,7 +38,7 @@ namespace MyEngine2.Test.Common
         [TestMethod]
         public void TestAppender()
         {
-            Event @event = new Event(Level.ERROR, "This is a test");
+            Event @event = new Event(Level.Error, "This is a test");
             ConsoleAppender consoleAppender = new ConsoleAppender(new Formatter());
             consoleAppender.Append(@event);
         }
