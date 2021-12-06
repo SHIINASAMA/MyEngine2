@@ -7,10 +7,17 @@ namespace MyEngine2.Common.Net
     public class BaseSocket : Socket
     {
         public int MaxHeaderLength { get; } = 1024 * 80;
+        public int MaxHeadersLength { get; } = 1024 * 8000;
 
-        public BaseSocket(AddressFamily addressFamily, int maxHeaderLength = 1024 * 80) : base(addressFamily, SocketType.Stream, ProtocolType.Tcp)
+        public int HeadersLength
+        { get { return _HeadersLength; } }
+
+        private int _HeadersLength = 0;
+
+        public BaseSocket(AddressFamily addressFamily, int maxHeaderLength = 1024 * 80, int maxHeadersLength = 1024 * 8000) : base(addressFamily, SocketType.Stream, ProtocolType.Tcp)
         {
             MaxHeaderLength = maxHeaderLength;
+            MaxHeadersLength = maxHeadersLength;
         }
 
         public BaseSocket(SafeSocketHandle safeSocketHandle) : base(safeSocketHandle)
@@ -32,50 +39,68 @@ namespace MyEngine2.Common.Net
             byte[] buffer = new byte[1];
             char ch;
             bool hit = false;// 上一个字符是否为 '\r'
-            StringBuilder stringBuilder = new StringBuilder();
-
             int count = 0;
-            while (true)
+            StringBuilder stringBuilder = new StringBuilder();
+            try
             {
-                Receive(buffer, 1, SocketFlags.None);
-                ch = Encoding.ASCII.GetString(buffer)[0];
-                count++;
-                if (count >= MaxHeaderLength)
+                while (true)
                 {
-                    throw new HttpHeaderException("Http 头部单行过长");
-                }
-                else if (ch == '\r')
-                {
-                    hit = true;
-                    continue;
-                }
-                else if (ch == '\n')
-                {
-                    if (hit)
+                    Receive(buffer, 1, SocketFlags.None);
+                    ch = Encoding.ASCII.GetString(buffer)[0];
+                    count++;
+                    if (count >= MaxHeaderLength)
                     {
-                        return stringBuilder.ToString();
+                        throw new HttpHeaderException("Http 头部单行过长");
+                    }
+                    else if (ch == '\r')
+                    {
+                        hit = true;
+                        continue;
+                    }
+                    else if (ch == '\n')
+                    {
+                        if (hit)
+                        {
+                            return stringBuilder.ToString();
+                        }
+                        else
+                        {
+                            stringBuilder.Append(ch);
+                            hit = false;
+                        }
                     }
                     else
                     {
                         stringBuilder.Append(ch);
-                        hit = false;
+                        continue;
                     }
                 }
-                else
+            }
+            finally
+            {
+                _HeadersLength += count;
+                if (_HeadersLength > MaxHeadersLength)
                 {
-                    stringBuilder.Append(ch);
-                    continue;
+                    throw new BaseSocketException("Header 头部过长");
                 }
             }
         }
 
         public int WriteLine(string line)
         {
-            if (line.Length > MaxHeaderLength + 2)
+            _HeadersLength += line.Length;
+            if (_HeadersLength > MaxHeadersLength)
+            {
+                throw new BaseSocketException("Header 头部过长");
+            }
+            else if (line.Length > MaxHeaderLength + 2)
             {
                 throw new HttpHeaderException("Http 头部单行过长");
             }
-            return base.Send(Encoding.ASCII.GetBytes(line + "\r\n"));
+            else
+            {
+                return base.Send(Encoding.ASCII.GetBytes(line + "\r\n"));
+            }
         }
     }
 }

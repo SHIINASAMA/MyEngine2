@@ -68,8 +68,27 @@ namespace MyEngine2.Test.Common
         }
 
         [TestMethod]
-        public void TestHttpRequestAndResponse()
+        public void TestParser()
         {
+            BaseSocket serverSocket = new BaseSocket(System.Net.Sockets.AddressFamily.InterNetwork);
+            serverSocket.Bind(System.Net.IPAddress.Loopback, 8080);
+            serverSocket.Listen(10);
+
+            BaseSocket clientSocket = serverSocket.Accept();
+            HttpRequest? request = HttpParser.ParseRequestFromSocket(clientSocket);
+            if (request == null) Assert.IsTrue(false);
+
+            LoggerManager.Logger.Info(string.Format("{0} {1} {2}", request.Method, request.RawUrl, request.Version));
+            foreach (var pair in request)
+            {
+                LoggerManager.Logger.Info(pair.Key + ": " + pair.Value);
+            }
+
+            clientSocket.Shutdown(System.Net.Sockets.SocketShutdown.Both);
+            clientSocket.Close();
+            clientSocket.Dispose();
+            serverSocket.Close();
+            serverSocket.Dispose();
         }
     }
 }
