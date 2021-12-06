@@ -10,9 +10,6 @@ namespace MyEngine2.Test.Common
         [TestMethod]
         public void TestBaseSocket()
         {
-            Logger logger = new Logger();
-            logger.AddAppender(new ConsoleAppender(new Formatter()));
-
             BaseSocket serverSocket = new BaseSocket(System.Net.Sockets.AddressFamily.InterNetwork);
             serverSocket.Bind(System.Net.IPAddress.Loopback, 8080);
             serverSocket.Listen(10);
@@ -33,14 +30,46 @@ namespace MyEngine2.Test.Common
             }
 
             clientSocket.WriteLine("HTTP/1.1 302");
-            clientSocket.WriteLine("Location: www.baidu.com");
+            clientSocket.WriteLine("Location: https://www.baidu.com");
             clientSocket.WriteLine("");
             clientSocket.Shutdown(System.Net.Sockets.SocketShutdown.Both);
             clientSocket.Close();
             clientSocket.Dispose();
-            //serverSocket.Shutdown(System.Net.Sockets.SocketShutdown.Both);
-            //serverSocket.Close();
-            //serverSocket.Dispose();
+            serverSocket.Close();
+            serverSocket.Dispose();
+        }
+
+        [TestMethod]
+        public void TestHttpPackage()
+        {
+            HttpPackage headers = new();
+            headers.Location = "localhost";
+            headers.Server = "MyEngine2";
+
+            BaseSocket serverSocket = new BaseSocket(System.Net.Sockets.AddressFamily.InterNetwork);
+            serverSocket.Bind(System.Net.IPAddress.Loopback, 8080);
+            serverSocket.Listen(10);
+
+            BaseSocket clientSocket = serverSocket.Accept();
+            while (clientSocket.ReadLine().Length != 0) ;
+
+            clientSocket.WriteLine("HTTP/1.1 200 OK");
+            foreach (var pair in headers)
+            {
+                clientSocket.WriteLine(pair.Key + ": " + pair.Value);
+            }
+            clientSocket.WriteLine("");
+
+            clientSocket.Shutdown(System.Net.Sockets.SocketShutdown.Both);
+            clientSocket.Close();
+            clientSocket.Dispose();
+            serverSocket.Close();
+            serverSocket.Dispose();
+        }
+
+        [TestMethod]
+        public void TestHttpRequestAndResponse()
+        {
         }
     }
 }
