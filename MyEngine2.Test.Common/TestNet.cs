@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MyEngine2.Common.Logger;
 using MyEngine2.Common.Net;
+using System;
 
 namespace MyEngine2.Test.Common
 {
@@ -89,6 +90,17 @@ namespace MyEngine2.Test.Common
             clientSocket.Dispose();
             serverSocket.Close();
             serverSocket.Dispose();
+        }
+
+        [TestMethod]
+        public void TestEncoder()
+        {
+            string message = @"これは!Encode消 息Test$.";
+            string encodedMessage = PercentEncoder.Encode(message);
+            LoggerManager.Logger.Info(string.Format("encodedMessage: {0}", encodedMessage));
+            string decodedMessage = PercentDecoder.Decoder(encodedMessage);
+            LoggerManager.Logger.Info(string.Format("decodedMessage: {0}", decodedMessage));
+            Assert.IsTrue(message.Equals(decodedMessage));
         }
     }
 }
