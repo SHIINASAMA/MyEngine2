@@ -8,18 +8,18 @@
 
         public HttpMethod Method { get; set; } = HttpMethod.Nonsupport;
 
-        public HttpRequest(string version, string rawUrl, HttpMethod method, BaseSocket baseSocket) : base(baseSocket)
-        {
-            Version = version;
-            RawUrl = rawUrl;
-            Method = method;
-        }
+        public string Url
+        { get { return QueryString.Url; } }
+
+        public QueryString QueryString;
 
         public HttpRequest(string version, string rawUrl, HttpMethod method)
         {
             Version = version;
             RawUrl = rawUrl;
             Method = method;
+
+            QueryString = new(rawUrl);
         }
 
         public new void Clear()

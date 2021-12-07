@@ -14,8 +14,7 @@
                 request = new HttpRequest(
                     firstLineElements[2],
                     firstLineElements[1],
-                    StringToMethod(firstLineElements[0]),
-                    socket
+                    StringToMethod(firstLineElements[0])
                     );
 
                 while ((headerLine = socket.ReadLine()).Length != 0)
@@ -39,8 +38,7 @@
                 response = new HttpResponse(
                     firstLineElements[0],
                     firstLineElements[1],
-                    firstLineElements.Length == 3 ? firstLineElements[2] : "",
-                    socket
+                    firstLineElements.Length == 3 ? firstLineElements[2] : ""
                     );
 
                 while ((headerLine = socket.ReadLine()).Length != 0)

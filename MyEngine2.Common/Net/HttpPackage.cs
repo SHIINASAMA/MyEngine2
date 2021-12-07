@@ -62,18 +62,6 @@
             set { SetHeader("Date", value); }
         }
 
-        private BaseSocket? BaseSocket;
-
-        public bool Connect
-        {
-            get { return BaseSocket != null && BaseSocket.Connected; }
-        }
-
-        public HttpPackage(BaseSocket baseSocket)
-        {
-            BaseSocket = baseSocket;
-        }
-
         public HttpPackage()
         {
         }
@@ -86,20 +74,6 @@
         public string GetHeader(string key)
         {
             return base[key] ?? "";
-        }
-
-        public int ReadBody(byte[] bytes, int offset, int size)
-        {
-            if (BaseSocket == null) throw new BaseSocketException("BaseSocket 尚未初始化");
-            if (!BaseSocket.Connected) throw new BaseSocketException("BaseSocket 尚未连接");
-            return BaseSocket.Receive(bytes, offset, size, System.Net.Sockets.SocketFlags.None);
-        }
-
-        public int WriteBody(byte[] bytes, int offset, int size)
-        {
-            if (BaseSocket == null) throw new BaseSocketException("BaseSocket 尚未初始化");
-            if (!BaseSocket.Connected) throw new BaseSocketException("BaseSocket 尚未连接");
-            return BaseSocket.Send(bytes, offset, size, System.Net.Sockets.SocketFlags.None);
         }
     }
 }

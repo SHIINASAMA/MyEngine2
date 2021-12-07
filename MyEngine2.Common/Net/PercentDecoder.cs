@@ -10,7 +10,7 @@ namespace MyEngine2.Common.Net
         /// <param name="content">ASCII 编码的字符串</param>
         /// <param name="bufferSize">使用的缓存大小</param>
         /// <returns>UTF8 编码的字符串</returns>
-        public static string Decoder(string content, int bufferSize = 8192)
+        public static string Decode(string content, int bufferSize = 8192)
         {
             byte[] bytes = new byte[bufferSize];
             char indexChar;

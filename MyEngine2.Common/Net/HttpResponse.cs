@@ -8,13 +8,6 @@
 
         public string Description { get; set; } = "";
 
-        public HttpResponse(string version, string stateCode, string description, BaseSocket baseSocket) : base(baseSocket)
-        {
-            Version = version;
-            StateCode = stateCode;
-            Description = description;
-        }
-
         public HttpResponse(string version, string stateCode, string description)
         {
             Version = version;
