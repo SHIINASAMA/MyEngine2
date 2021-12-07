@@ -1,15 +1,21 @@
-﻿namespace MyEngine2.Common.Net
+﻿using System.Text;
+
+namespace MyEngine2.Common.Net
 {
     public class QueryString : Dictionary<string, string>
     {
         public string Url { get; set; } = "/";
 
-        public QueryString(string rawUrl)
+        public QueryString()
+        {
+        }
+
+        public void Reset(string rawUrl)
         {
             int index = rawUrl.IndexOf('?');
             if (index != -1)
             {
-                Url = rawUrl.Substring(0, index);
+                Url = rawUrl[..index];
                 if (Url.IndexOf('%') != -1)
                 {
                     Url = PercentDecoder.Decode(Url);
@@ -39,6 +45,29 @@
                 }
                 Add(keyValue[0], keyValue.Length == 1 ? "" : keyValue[1]);
             }
+        }
+
+        public string GenerateRawUrl()
+        {
+            StringBuilder stringBuilder = new();
+            bool first = true;
+            foreach (var pair in this)
+            {
+                if (!first)
+                {
+                    stringBuilder.Append('&');
+                }
+                else
+                {
+                    first = false;
+                }
+                stringBuilder.Append(
+                    string.Format("{0}={1}",
+                    PercentEncoder.Encode(pair.Key),
+                    PercentEncoder.Encode(pair.Value))
+                    );
+            }
+            return String.Format("{0}?{1}", Url, stringBuilder.ToString());
         }
     }
 }

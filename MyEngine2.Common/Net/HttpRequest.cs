@@ -4,14 +4,18 @@
     {
         public string Version { get; set; } = "HTTP/1.1";
 
-        public string RawUrl { get; set; } = "/";
+        public string RawUrl
+        {
+            get { return QueryString.GenerateRawUrl(); }
+            set { QueryString.Reset(value); }
+        }
 
         public HttpMethod Method { get; set; } = HttpMethod.Nonsupport;
 
         public string Url
         { get { return QueryString.Url; } }
 
-        public QueryString QueryString;
+        public QueryString QueryString = new();
 
         public HttpRequest(string version, string rawUrl, HttpMethod method)
         {
@@ -19,7 +23,7 @@
             RawUrl = rawUrl;
             Method = method;
 
-            QueryString = new(rawUrl);
+            QueryString.Reset(rawUrl);
         }
 
         public new void Clear()

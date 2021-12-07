@@ -64,5 +64,10 @@
                     return HttpMethod.Nonsupport;
             }
         }
+
+        public static string MethodToString(HttpMethod method)
+        {
+            return method.ToString();
+        }
     }
 }

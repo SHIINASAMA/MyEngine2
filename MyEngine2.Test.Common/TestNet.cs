@@ -108,12 +108,16 @@ namespace MyEngine2.Test.Common
         {
             // UTF-8 URl -> /query?name=かおる&pwd=&uuid=1000000
             string rawUrl = @"/query?name=%E3%81%8B%E3%81%8A%E3%82%8B&pwd=&uuid=1000000";
-            QueryString queryString = new QueryString(rawUrl);
+            QueryString queryString = new();
+            queryString.Reset(rawUrl);
             LoggerManager.Logger.Info(queryString.Url);
             foreach (var pair in queryString)
             {
                 LoggerManager.Logger.Info(String.Format("{0} = {1}", pair.Key, pair.Value));
             }
+            string genUrl = queryString.GenerateRawUrl();
+            LoggerManager.Logger.Info(genUrl);
+            Assert.IsTrue(rawUrl.Equals(genUrl));
         }
     }
 }
