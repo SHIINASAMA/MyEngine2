@@ -21,6 +21,12 @@ namespace MyEngine2.Common.Net
                     Url = PercentDecoder.Decode(Url);
                 }
             }
+            else
+            {
+                // 无查询字符串 - 退出
+                Url = rawUrl;
+                return;
+            }
 
             string queryString = rawUrl.Substring(index + 1);
             if (queryString.IndexOf('%') != -1)

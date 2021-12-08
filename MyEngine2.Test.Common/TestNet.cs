@@ -119,5 +119,31 @@ namespace MyEngine2.Test.Common
             LoggerManager.Logger.Info(genUrl);
             Assert.IsTrue(rawUrl.Equals(genUrl));
         }
+
+        [TestMethod]
+        public void TestKeepAlive()
+        {
+            BaseSocket serverSocket = new(System.Net.Sockets.AddressFamily.InterNetwork);
+            serverSocket.Bind(System.Net.IPAddress.Loopback, 8080);
+            serverSocket.Listen(10);
+
+            BaseSocket clientSocket = serverSocket.Accept();
+            clientSocket.ReceiveTimeout = 1000 * 20;
+            HttpHelper helper = new(clientSocket);
+
+            HttpRequest? request1 = helper.ReadRequest();
+            LoggerManager.Logger.Info(request1 == null ? "NULL" : request1.Url);
+
+            HttpResponse response1 = new("HTTP/1.1", "200", "OK");
+            response1.SetHeader("Connection", "Keep-Alive");
+            helper.WriteResponse(response1);
+
+            HttpRequest? request2 = helper.ReadRequest();
+            LoggerManager.Logger.Info(request2 == null ? "NULL" : request2.Url);
+
+            HttpResponse response2 = new("HTTP/1.1", "200", "OK");
+            response2.SetHeader("Connection", "Close");
+            helper.WriteResponse(response2);
+        }
     }
 }
