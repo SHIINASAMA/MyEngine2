@@ -39,7 +39,7 @@ namespace MyEngine2.Test.Common
         public void TestAppender()
         {
             Event @event = new Event(Level.Error, "This is a test");
-            ConsoleAppender consoleAppender = new ConsoleAppender(new Formatter());
+            ConsoleAppender consoleAppender = new ConsoleAppender(Level.Debug, new Formatter());
             consoleAppender.Append(@event);
         }
 
@@ -50,7 +50,7 @@ namespace MyEngine2.Test.Common
         {
             Thread.CurrentThread.Name = "MainThread";
             Formatter formatter = new("[%lv] %tm %tn %ti %fn:%ln - %m", "yyyy-MM-dd HH:mm:ss");
-            ConsoleAppender consoleAppender = new ConsoleAppender(formatter);
+            ConsoleAppender consoleAppender = new ConsoleAppender(Level.Debug, formatter);
 
             logger.AddAppender(consoleAppender);
             logger.Debug("MainThread Message");
@@ -69,6 +69,13 @@ namespace MyEngine2.Test.Common
         {
             Thread.CurrentThread.Name = "SubThread";
             logger.Info("SubThread Message");
+        }
+
+        [TestMethod]
+        public void TestFileAppender()
+        {
+            FileAppender fileAppender = new("Test.log", Level.Debug, new Formatter());
+            fileAppender.Append(new Event(Level.Info, "This is test."));
         }
     }
 }
