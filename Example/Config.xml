@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ServiceProfile>
+    <Server>
+        <!-- 服务器名称 -->
+        <Name>MyEngine2</Name>
+        <!-- 监听地址 -->
+        <Address>localhost</Address>
+        <!-- 绑定端口 -->
+        <Port>8080</Port>
+        <!-- Web 根目录 -->
+        <Root>/Web</Root>
+        <!-- 手动指定主页 -->
+        <HomePage>
+            <!-- 是否启用 -->
+            <Enable>false</Enable>
+            <!-- 文件路径 -->
+            <Path>/index.html</Path>
+        </HomePage>
+        <!-- 指定 404 页面 -->
+        <NotFoundPage>
+            <!-- 是否启用 -->
+            <Enable>false</Enable>
+            <!-- 文件路径 -->
+            <Path>/not_found.html</Path>
+        </NotFoundPage>
+    </Server>
+    <Logger>
+        <!-- 控制台日志输出地 -->
+        <ConsoleAppender>
+            <!-- 是否启用 -->
+            <Enable>true</Enable>
+            <!-- 日志等级阈值 -->
+            <Level>Debug</Level>
+            <!-- 日志格式 -->
+            <Pattern>[%lv] %tm %m</Pattern>
+            <!-- 日期格式 -->
+            <DatePattern>HH:mm:ss</DatePattern>
+        </ConsoleAppender>
+        <FileAppender>
+            <!-- 是否启用 -->
+            <Enable>false</Enable>
+            <!-- 日志等级阈值 -->
+            <Level>Debug</Level>
+            <!-- 文件名称格式 -->
+            <NamePattern>/log/HH:mm:ss.log</NamePattern>
+            <!-- 日志格式 -->
+            <Pattern>[%lv] %tm %m</Pattern>
+            <!-- 日期格式 -->
+            <DatePattern>HH:mm:ss</DatePattern>
+        </FileAppender>
+    </Logger>
+    <Net>
+        <!-- 是否允许断点续传 -->
+        <AcceptRanges>false</AcceptRanges>
+        <!-- 是否启用长连接 -->
+        <EnableKeepAlive>false</EnableKeepAlive>
+        <!-- 接收超时时间，单位毫秒 -->
+        <ReceiveTimeOut>2000</ReceiveTimeOut>
+        <!-- 发送超时时间，单位毫秒 -->
+        <SendTimeOut>0</SendTimeOut>
+        <!-- 单次连接请求上限 -->
+        <MaxRequestTimes>64</MaxRequestTimes>
+        <!-- 报文头部单行长度最大值 -->
+        <MaxHeaderLength>81920</MaxHeaderLength>
+        <!-- 报文头部长度最大值 -->
+        <MaxHeadersLength>8192000</MaxHeadersLength>
+    </Net>
+</ServiceProfile>
