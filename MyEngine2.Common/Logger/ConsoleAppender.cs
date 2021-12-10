@@ -2,7 +2,7 @@
 {
     public class ConsoleAppender : Appender
     {
-        public ConsoleAppender(Formatter formatter) : base(formatter)
+        public ConsoleAppender(Level level, Formatter formatter) : base(level, formatter)
         {
         }
 

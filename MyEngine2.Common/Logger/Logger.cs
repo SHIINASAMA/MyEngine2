@@ -2,25 +2,15 @@
 {
     public class Logger
     {
-        public Level Level { get; }
-
         private LinkedList<Appender> Appenders = new LinkedList<Appender>();
 
         private void Log(Level level, string message)
         {
-            if (Level <= level)
+            Event @event = new Event(level, message);
+            foreach (Appender appender in Appenders)
             {
-                Event @event = new Event(level, message);
-                foreach (Appender appender in Appenders)
-                {
-                    appender.Append(@event);
-                }
+                appender.PreAppend(@event);
             }
-        }
-
-        public Logger(Level level = Level.Info)
-        {
-            Level = level;
         }
 
         public void AddAppender(Appender appender)

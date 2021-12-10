@@ -4,9 +4,20 @@
     {
         public Formatter Formatter { get; }
 
-        public Appender(Formatter formatter)
+        public Level Level { get; }
+
+        public Appender(Level level, Formatter formatter)
         {
+            Level = level;
             Formatter = formatter;
+        }
+
+        public void PreAppend(Event @event)
+        {
+            if (Level <= @event.Level)
+            {
+                Append(@event);
+            }
         }
 
         public abstract void Append(Event @event);

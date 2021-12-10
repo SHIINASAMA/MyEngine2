@@ -14,8 +14,8 @@
 
         private static Logger InitLogger()
         {
-            _Logger = new Logger(Level.Debug);
-            _Logger.AddAppender(new ConsoleAppender(new Formatter()));
+            _Logger = new Logger();
+            _Logger.AddAppender(new ConsoleAppender(Level.Debug, new Formatter()));
             return _Logger;
         }
     }
