@@ -7,6 +7,15 @@
         <Address>localhost</Address>
         <!-- 绑定端口 -->
         <Port>8080</Port>
+        <!-- 线程池 -->
+        <ThreadPool>
+            <!-- 线程池名称 -->
+            <Name>ThreadPool</Name>
+            <!-- 线程数量 -->
+            <ThreadCount>16</ThreadCount>
+            <!-- 任务队列长度 -->
+            <QueueLength>256</QueueLength>
+        </ThreadPool>
         <!-- Web 根目录 -->
         <Root>/Web</Root>
         <!-- 手动指定主页 -->

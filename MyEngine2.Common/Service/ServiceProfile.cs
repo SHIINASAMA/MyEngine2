@@ -11,9 +11,17 @@
             public string Name { get; set; } = "MyEngine2";
             public string Address { get; set; } = "localhost";
             public int Port { get; set; } = 8080;
+            public ThreadPoolProfile ThreadPool { get; set; } = new();
             public string Root { get; set; } = "Web";
             public HomePageProfile HomePage { get; set; } = new();
             public NotFoundPageProfile NotFoundPage { get; set; } = new();
+
+            public class ThreadPoolProfile
+            {
+                public string Name { get; set; } = "ThreadPool";
+                public int ThreadCount { get; set; } = 16;
+                public int QueueLength { get; set; } = 256;
+            }
 
             public class HomePageProfile
             {
