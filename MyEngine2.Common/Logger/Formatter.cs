@@ -2,9 +2,19 @@
 
 namespace MyEngine2.Common.Logger
 {
+    /// <summary>
+    /// 日志格式化器
+    /// </summary>
     public class Formatter
     {
+        /// <summary>
+        /// 日志格式化匹配字符串
+        /// </summary>
         public string Pattern { get; }
+
+        /// <summary>
+        /// 日志日期格式化匹配字符串
+        /// </summary>
         public string TimePattern { get; }
 
         /// <summary>
@@ -25,6 +35,11 @@ namespace MyEngine2.Common.Logger
             TimePattern = timePattern;
         }
 
+        /// <summary>
+        /// 格式化日志
+        /// </summary>
+        /// <param name="event">日志事件</param>
+        /// <returns>格式化后字符串</returns>
         public string Format(Event @event)
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -111,6 +126,11 @@ namespace MyEngine2.Common.Logger
             return stringBuilder.ToString();
         }
 
+        /// <summary>
+        /// 日志等级转字符串
+        /// </summary>
+        /// <param name="level">日志等级</param>
+        /// <returns>日志等级字符串</returns>
         public static string LevelToString(Level level)
         {
             if (level == Level.Info || level == Level.Warn)
