@@ -4,36 +4,73 @@ using System.Net.Sockets;
 
 namespace MyEngine2.Common.Net
 {
+    /// <summary>
+    /// 用于 Http 传输的基础套接字
+    /// </summary>
     public class BaseSocket : Socket
     {
+        /// <summary>
+        /// 头部单行最大长度
+        /// </summary>
         public int MaxHeaderLength { get; } = 1024 * 80;
+
+        /// <summary>
+        /// 头部最大长度
+        /// </summary>
         public int MaxHeadersLength { get; } = 1024 * 8000;
 
+        /// <summary>
+        /// 头部长度
+        /// </summary>
         public int HeadersLength
         { get { return _HeadersLength; } }
 
         private int _HeadersLength = 0;
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="addressFamily">地址族</param>
+        /// <param name="maxHeaderLength">头部最大单行长度</param>
+        /// <param name="maxHeadersLength">头部最大长度</param>
         public BaseSocket(AddressFamily addressFamily, int maxHeaderLength = 1024 * 80, int maxHeadersLength = 1024 * 8000) : base(addressFamily, SocketType.Stream, ProtocolType.Tcp)
         {
             MaxHeaderLength = maxHeaderLength;
             MaxHeadersLength = maxHeadersLength;
         }
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="safeSocketHandle">安全套接字句柄</param>
         public BaseSocket(SafeSocketHandle safeSocketHandle) : base(safeSocketHandle)
         {
         }
 
+        /// <summary>
+        /// 绑定
+        /// </summary>
+        /// <param name="iPAddress">IP 地址</param>
+        /// <param name="port">端口</param>
         public void Bind(IPAddress iPAddress, int port)
         {
             Bind(new IPEndPoint(iPAddress, port));
         }
 
+        /// <summary>
+        /// 接收连接
+        /// </summary>
+        /// <returns>客户端套接字</returns>
         public new BaseSocket Accept()
         {
             return new BaseSocket(base.Accept().SafeHandle);
         }
 
+        /// <summary>
+        /// 读取一行头部 - 自动丢弃 "\r\n"
+        /// </summary>
+        /// <returns>一行头部字符串</returns>
+        /// <exception cref="HttpException"></exception>
         public string ReadLine()
         {
             byte[] buffer = new byte[1];
@@ -89,6 +126,12 @@ namespace MyEngine2.Common.Net
             }
         }
 
+        /// <summary>
+        /// 写入一行头部字符串
+        /// </summary>
+        /// <param name="line">一行头部字符串</param>
+        /// <returns>发送字节数</returns>
+        /// <exception cref="HttpException"></exception>
         public int WriteLine(string line)
         {
             _HeadersLength += line.Length;

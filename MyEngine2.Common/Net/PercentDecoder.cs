@@ -2,6 +2,9 @@
 
 namespace MyEngine2.Common.Net
 {
+    /// <summary>
+    /// 百分号解码器
+    /// </summary>
     public class PercentDecoder
     {
         /// <summary>

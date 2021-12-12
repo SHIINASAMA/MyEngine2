@@ -1,7 +1,15 @@
 ﻿namespace MyEngine2.Common.Net
 {
+    /// <summary>
+    /// Http 解析器
+    /// </summary>
     public class HttpParser
     {
+        /// <summary>
+        /// 从 Socket 中解析请求报头
+        /// </summary>
+        /// <param name="socket">套接字</param>
+        /// <returns>Http 报头</returns>
         public static HttpRequest? ParseRequestFromSocket(BaseSocket socket)
         {
             HttpRequest? request = null;
@@ -26,6 +34,11 @@
             return request;
         }
 
+        /// <summary>
+        /// 从 Socket 中解析响应报头
+        /// </summary>
+        /// <param name="socket">套接字</param>
+        /// <returns>Http 响应报头</returns>
         public static HttpResponse? ParseResponseFromSocket(BaseSocket socket)
         {
             HttpResponse? response = null;
@@ -50,6 +63,11 @@
             return response;
         }
 
+        /// <summary>
+        /// 字符串转 Http 方法枚举
+        /// </summary>
+        /// <param name="method">方法字符串</param>
+        /// <returns>Http 方法枚举</returns>
         public static HttpMethod StringToMethod(string method)
         {
             switch (method.ToUpper())
@@ -65,6 +83,11 @@
             }
         }
 
+        /// <summary>
+        /// 方法转对应字符串
+        /// </summary>
+        /// <param name="method">Http 方法枚举</param>
+        /// <returns>方法字符串</returns>
         public static string MethodToString(HttpMethod method)
         {
             return method.ToString();

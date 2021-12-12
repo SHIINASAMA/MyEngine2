@@ -2,16 +2,23 @@
 
 namespace MyEngine2.Common.Net
 {
+    /// <summary>
+    /// Http 查询字符串
+    /// </summary>
     public class QueryString : Dictionary<string, string>
     {
+        /// <summary>
+        /// 资源地址
+        /// </summary>
         public string Url { get; set; } = "/";
 
-        public QueryString()
-        {
-        }
-
+        /// <summary>
+        /// 重新解析原始 Url
+        /// </summary>
+        /// <param name="rawUrl">原始 Url</param>
         public void Reset(string rawUrl)
         {
+            base.Clear();
             int index = rawUrl.IndexOf('?');
             if (index != -1)
             {
@@ -53,6 +60,10 @@ namespace MyEngine2.Common.Net
             }
         }
 
+        /// <summary>
+        /// 从数据中生成原始 Url
+        /// </summary>
+        /// <returns></returns>
         public string GenerateRawUrl()
         {
             StringBuilder stringBuilder = new();

@@ -1,5 +1,8 @@
 ﻿namespace MyEngine2.Common.Net
 {
+    /// <summary>
+    /// Http 报头字段包
+    /// </summary>
     public class HttpPackage : Dictionary<string, string>
     {
         public string Host
@@ -66,11 +69,21 @@
         {
         }
 
+        /// <summary>
+        /// 设置报头
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
         public void SetHeader(string key, string value)
         {
             Add(key, value);
         }
 
+        /// <summary>
+        /// 获取报头
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <returns>值</returns>
         public string GetHeader(string key)
         {
             return base[key] ?? "";
