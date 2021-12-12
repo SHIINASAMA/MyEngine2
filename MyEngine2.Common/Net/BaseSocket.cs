@@ -12,12 +12,12 @@ namespace MyEngine2.Common.Net
         /// <summary>
         /// 头部单行最大长度
         /// </summary>
-        public int MaxHeaderLength { get; } = 1024 * 80;
+        public int MaxHeaderLength { get; set; } = 1024 * 80;
 
         /// <summary>
         /// 头部最大长度
         /// </summary>
-        public int MaxHeadersLength { get; } = 1024 * 8000;
+        public int MaxHeadersLength { get; set; } = 1024 * 8000;
 
         /// <summary>
         /// 头部长度
@@ -31,12 +31,8 @@ namespace MyEngine2.Common.Net
         /// 构造函数
         /// </summary>
         /// <param name="addressFamily">地址族</param>
-        /// <param name="maxHeaderLength">头部最大单行长度</param>
-        /// <param name="maxHeadersLength">头部最大长度</param>
-        public BaseSocket(AddressFamily addressFamily, int maxHeaderLength = 1024 * 80, int maxHeadersLength = 1024 * 8000) : base(addressFamily, SocketType.Stream, ProtocolType.Tcp)
+        public BaseSocket(AddressFamily addressFamily) : base(addressFamily, SocketType.Stream, ProtocolType.Tcp)
         {
-            MaxHeaderLength = maxHeaderLength;
-            MaxHeadersLength = maxHeadersLength;
         }
 
         /// <summary>
