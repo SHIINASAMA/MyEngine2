@@ -19,7 +19,7 @@ namespace MyEngine2.Common.Logger
 
         /// <summary>
         /// <para>对应 pattern 而言，可以使用以下占位符</para>
-        /// <para>% -> %\n</para>
+        /// <para>%% -> %</para>
         /// <para>%lv ->  level</para>
         /// <para>%tm -> time</para>
         /// <para>%m -> message</para>
