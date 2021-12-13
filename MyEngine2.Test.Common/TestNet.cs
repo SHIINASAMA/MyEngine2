@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MyEngine2.Common.Logger;
 using MyEngine2.Common.Net;
+using MyEngine2.Common.Service;
 using System;
 
 namespace MyEngine2.Test.Common

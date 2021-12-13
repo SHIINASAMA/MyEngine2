@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MyEngine2.Common.Logger;
 using MyEngine2.Common.Service;
 using System.Threading;
 
@@ -30,6 +29,12 @@ namespace MyEngine2.Test.Common
         public void ThreadProc()
         {
             LoggerManager.Logger.Info(Thread.CurrentThread.Name ?? "Unknown Thread");
+        }
+
+        [TestMethod]
+        public void TestMainService()
+        {
+            ServiceMain main = new(new ServiceProfile());
         }
     }
 }

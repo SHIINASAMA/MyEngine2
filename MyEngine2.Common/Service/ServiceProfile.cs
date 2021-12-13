@@ -9,7 +9,7 @@
         public class ServerProfile
         {
             public string Name { get; set; } = "MyEngine2";
-            public string Address { get; set; } = "localhost";
+            public string Address { get; set; } = "127.0.0.1";
             public int Port { get; set; } = 8080;
             public int Backlog { get; set; } = 64;
             public ThreadPoolProfile ThreadPool { get; set; } = new();
@@ -46,7 +46,7 @@
             {
                 public bool Enable { get; set; } = true;
                 public Logger.Level Level { get; set; } = Common.Logger.Level.Debug;
-                public string Pattern { get; set; } = "[%lv %tm %m]";
+                public string Pattern { get; set; } = "[%lv] %tm %m";
                 public string DatePattern { get; set; } = "HH:mm:ss";
             }
 
