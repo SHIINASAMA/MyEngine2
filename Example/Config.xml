@@ -7,6 +7,8 @@
         <Address>localhost</Address>
         <!-- 绑定端口 -->
         <Port>8080</Port>
+        <!-- 连接队列长度 -->
+        <Backlog>64</Backlog>
         <!-- 线程池 -->
         <ThreadPool>
             <!-- 线程池名称 -->
@@ -51,7 +53,7 @@
             <!-- 日志等级阈值 -->
             <Level>Debug</Level>
             <!-- 文件名称格式 -->
-            <NamePattern>/log/HH:mm:ss.log</NamePattern>
+            <NamePattern>'/log/'HH:mm:ss'.log'</NamePattern>
             <!-- 日志格式 -->
             <Pattern>[%lv] %tm %m</Pattern>
             <!-- 日期格式 -->

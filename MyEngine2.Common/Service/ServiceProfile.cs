@@ -11,6 +11,7 @@
             public string Name { get; set; } = "MyEngine2";
             public string Address { get; set; } = "localhost";
             public int Port { get; set; } = 8080;
+            public int Backlog { get; set; } = 64;
             public ThreadPoolProfile ThreadPool { get; set; } = new();
             public string Root { get; set; } = "Web";
             public HomePageProfile HomePage { get; set; } = new();
@@ -51,9 +52,9 @@
 
             public class FileAppenderProfile
             {
-                public bool Enable { get; set; } = true;
+                public bool Enable { get; set; } = false;
                 public Logger.Level Level { get; set; } = Common.Logger.Level.Debug;
-                public string NamePattern { get; set; } = "/log/HH:mm:ss.log";
+                public string NamePattern { get; set; } = "'/log/'HH:mm:ss'.log'";
                 public string Pattern { get; set; } = "[%lv %tm %m]";
                 public string DatePattern { get; set; } = "HH:mm:ss";
             }
