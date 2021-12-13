@@ -8,6 +8,7 @@ namespace MyEngine2.Common.Service
         private ServiceProfile ServiceProfile;
         private BaseSocket? BaseSocket;
         private ThreadPool? ThreadPool;
+        private ServletSet? ServletSet;
 
         #region LoggerWrapper
 
@@ -45,12 +46,16 @@ namespace MyEngine2.Common.Service
 
             // 3.初始化线程池
             InitThreadPool();
-            Info(String.Format("[OK] ThreadPool Name:{0} Threads:{1} QueueLength:{2}",
+            Info(string.Format("[OK] ThreadPool Name:{0} Threads:{1} QueueLength:{2}",
                 ServiceProfile.Server.ThreadPool.Name,
                 ServiceProfile.Server.ThreadPool.ThreadCount,
                 ServiceProfile.Server.ThreadPool.QueueLength)
                 );
             Info("[OK] ThreadPool");
+
+            // 4.初始化服务集
+            InitServletSet();
+            Info("[OK] ServletSet");
         }
 
         private void InitLogger()
@@ -83,6 +88,20 @@ namespace MyEngine2.Common.Service
                 ServiceProfile.Server.ThreadPool.ThreadCount,
                 ServiceProfile.Server.ThreadPool.QueueLength
                 );
+        }
+
+        private void InitServletSet()
+        {
+            ServletSet = new();
+            // 检测是否手动设置主页（HomePage）和未找到请求资源页面（NotFoundPage）
+            if (ServiceProfile.Server.HomePage.Enable)
+            {
+                Info(string.Format("HomePage    : {0}", ServiceProfile.Server.HomePage.Path));
+            }
+            if (ServiceProfile.Server.NotFoundPage.Enable)
+            {
+                Info(string.Format("NoFoundPage : {0}", ServiceProfile.Server.NotFoundPage.Path));
+            }
         }
 
         private void MainLoop()

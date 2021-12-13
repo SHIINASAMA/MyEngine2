@@ -21,6 +21,13 @@
         public string Description { get; set; } = "OK";
 
         /// <summary>
+        /// 默认构造函数
+        /// </summary>
+        public HttpResponse()
+        {
+        }
+
+        /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="version">Http 版本</param>
