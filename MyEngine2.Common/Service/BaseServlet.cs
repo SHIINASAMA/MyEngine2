@@ -10,7 +10,14 @@ namespace MyEngine2.Common.Service
         /// <summary>
         /// Servlet Url
         /// </summary>
-        public string Url { get; set; }
+        public string Url { get; set; } = "/";
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        public BaseServlet()
+        {
+        }
 
         /// <summary>
         /// 构造函数
@@ -33,45 +40,34 @@ namespace MyEngine2.Common.Service
             {
                 throw new ServletException("HttpRequest 为空");
             }
-
-            HttpResponse response = new HttpResponse();
-            OnRequest(request, response);
-            httpHelper.WriteResponse(response);
-            AfterRequest(socket, request.Method);
+            OnRequest(socket, request);
         }
 
-        private void OnRequest(HttpRequest request, HttpResponse response)
+        /// <summary>
+        /// 发送响应
+        /// </summary>
+        /// <param name="socket">客户端 Socket</param>
+        /// <param name="response">响应</param>
+        public void SendResponse(BaseSocket socket, HttpResponse response)
+        {
+            HttpHelper httpHelper = new(socket);
+            httpHelper.WriteResponse(response);
+        }
+
+        private void OnRequest(BaseSocket socket, HttpRequest request)
         {
             switch (request.Method)
             {
                 case Net.HttpMethod.Get:
-                    OnGet(request, response);
+                    OnGet(socket, request);
                     break;
 
                 case Net.HttpMethod.Post:
-                    OnPost(request, response);
+                    OnPost(socket, request);
                     break;
 
                 case Net.HttpMethod.Nonsupport:
-                    OnNonsupport(request, response);
-                    break;
-            }
-        }
-
-        private void AfterRequest(BaseSocket socket, Net.HttpMethod method)
-        {
-            switch (method)
-            {
-                case Net.HttpMethod.Get:
-                    AfterGet(socket);
-                    break;
-
-                case Net.HttpMethod.Post:
-                    AfterPost(socket);
-                    break;
-
-                case Net.HttpMethod.Nonsupport:
-                    AfterNonsupport(socket);
+                    OnNonsupport(socket, request);
                     break;
             }
         }
@@ -79,58 +75,40 @@ namespace MyEngine2.Common.Service
         /// <summary>
         /// 当请求方法为 GET 时执行，默认返回 405
         /// </summary>
+        /// <param name="socket">客户端套接字</param>
         /// <param name="request">请求</param>
-        /// <param name="response">响应</param>
-        public virtual void OnGet(HttpRequest request, HttpResponse response)
+        public virtual void OnGet(BaseSocket socket, HttpRequest request)
         {
+            HttpResponse response = new();
             response.StateCode = "405";
             response.Description = HttpState.Description["405"];
-        }
-
-        /// <summary>
-        /// 当 GET 响应头发送之后执行
-        /// </summary>
-        /// <param name="socket">客户端 Socket</param>
-        public virtual void AfterGet(BaseSocket socket)
-        {
+            SendResponse(socket, response);
         }
 
         /// <summary>
         /// 当请求方法为 POST 时执行，默认返回 405
         /// </summary>
+        /// <param name="socket">客户端套接字</param>
         /// <param name="request">请求</param>
-        /// <param name="response">响应</param>
-        public virtual void OnPost(HttpRequest request, HttpResponse response)
+        public virtual void OnPost(BaseSocket socket, HttpRequest request)
         {
+            HttpResponse response = new();
             response.StateCode = "405";
             response.Description = HttpState.Description["405"];
-        }
-
-        /// <summary>
-        /// 当 POST 响应头发送之后执行
-        /// </summary>
-        /// <param name="socket">客户端 Socket</param>
-        public virtual void AfterPost(BaseSocket socket)
-        {
+            SendResponse(socket, response);
         }
 
         /// <summary>
         /// 当请求方法为 Nonsupport 时执行，默认返回 501
         /// </summary>
+        /// <param name="socket">客户端套接字</param>
         /// <param name="request">请求</param>
-        /// <param name="response">响应</param>
-        public virtual void OnNonsupport(HttpRequest request, HttpResponse response)
+        public virtual void OnNonsupport(BaseSocket socket, HttpRequest request)
         {
+            HttpResponse response = new();
             response.StateCode = "501";
             response.Description = HttpState.Description["501"];
-        }
-
-        /// <summary>
-        /// 当 Nonsupport 响应头发送之后执行
-        /// </summary>
-        /// <param name="socket">客户端 Socket</param>
-        public virtual void AfterNonsupport(BaseSocket socket)
-        {
+            SendResponse(socket, response);
         }
     }
 }

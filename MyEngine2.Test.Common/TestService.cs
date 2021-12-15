@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MyEngine2.Common.Net;
 using MyEngine2.Common.Service;
 using System.Threading;
 
@@ -32,9 +33,17 @@ namespace MyEngine2.Test.Common
         }
 
         [TestMethod]
-        public void TestMainService()
+        public void TestFileServlet()
         {
-            ServiceMain main = new(new ServiceProfile());
+            BaseSocket serverSocket = new BaseSocket(System.Net.Sockets.AddressFamily.InterNetwork);
+            serverSocket.Bind(System.Net.IPAddress.Loopback, 8080);
+            serverSocket.Listen(10);
+
+            BaseSocket clientSocket = serverSocket.Accept();
+            FileServlet fileServlet = new FileServlet(".");
+            fileServlet.Exec(clientSocket);
+            clientSocket.Shutdown(System.Net.Sockets.SocketShutdown.Both);
+            clientSocket.Close();
         }
     }
 }

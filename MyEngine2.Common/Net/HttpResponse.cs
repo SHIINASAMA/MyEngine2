@@ -53,6 +53,16 @@
         }
 
         /// <summary>
+        /// 根据状态码自动补全信息
+        /// </summary>
+        /// <param name="httpStateCode">状态码</param>
+        public void AutoConfiguration(string httpStateCode)
+        {
+            StateCode = httpStateCode;
+            Description = HttpState.Description[httpStateCode] ?? "";
+        }
+
+        /// <summary>
         /// 将常规属性重置为默认值
         /// </summary>
         public new void Clear()

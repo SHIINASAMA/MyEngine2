@@ -9,6 +9,7 @@ namespace MyEngine2.Common.Service
         private BaseSocket? BaseSocket;
         private ThreadPool? ThreadPool;
         private ServletSet? ServletSet;
+        private Thread AcceptThread;
 
         #region LoggerWrapper
 
@@ -56,6 +57,25 @@ namespace MyEngine2.Common.Service
             // 4.初始化服务集
             InitServletSet();
             Info("[OK] ServletSet");
+
+            // 5.初始化循环监听线程
+            AcceptThread = new(new ThreadStart(MainLoop));
+            AcceptThread.Name = "AcceptThread";
+            Info("[OK] AcceptThread");
+        }
+
+        /// <summary>
+        /// 启动监听线程 - 非阻塞
+        /// </summary>
+        public void StartAccpet()
+        {
+            AcceptThread.Start();
+            Info("[OK] AcceptThread Started");
+        }
+
+        public void StopAccept()
+        {
+            AcceptThread.Interrupt();
         }
 
         private void InitLogger()
@@ -106,6 +126,16 @@ namespace MyEngine2.Common.Service
 
         private void MainLoop()
         {
+            while (true)
+            {
+                try
+                {
+                }
+                catch (ThreadInterruptedException e)
+                {
+                    break;
+                }
+            }
         }
 
         private void SubThreadProc()
