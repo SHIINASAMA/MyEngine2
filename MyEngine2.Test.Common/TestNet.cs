@@ -145,5 +145,27 @@ namespace MyEngine2.Test.Common
             response2.SetHeader("Connection", "Close");
             helper.WriteResponse(response2);
         }
+
+        [TestMethod]
+        public void TestRangeParser()
+        {
+            string rawString = "bytes=0-100,500-800,-700,500-";
+            HttpRangeParser parser = new(rawString);
+
+            Assert.AreEqual(parser.HttpRanges.First.Value.Start, 0);
+            Assert.AreEqual(parser.HttpRanges.First.Value.End, 100);
+            parser.HttpRanges.RemoveFirst();
+
+            Assert.AreEqual(parser.HttpRanges.First.Value.Start, 500);
+            Assert.AreEqual(parser.HttpRanges.First.Value.End, 800);
+            parser.HttpRanges.RemoveFirst();
+
+            Assert.AreEqual(parser.HttpRanges.First.Value.Start, -1);
+            Assert.AreEqual(parser.HttpRanges.First.Value.End, 700);
+            parser.HttpRanges.RemoveFirst();
+
+            Assert.AreEqual(parser.HttpRanges.First.Value.Start, 500);
+            Assert.AreEqual(parser.HttpRanges.First.Value.End, -1);
+        }
     }
 }
