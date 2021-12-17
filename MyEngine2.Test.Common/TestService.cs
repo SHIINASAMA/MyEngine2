@@ -1,6 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MyEngine2.Common.Net;
 using MyEngine2.Common.Service;
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Threading;
 
 namespace MyEngine2.Test.Common
@@ -32,18 +35,18 @@ namespace MyEngine2.Test.Common
             LoggerManager.Logger.Info(Thread.CurrentThread.Name ?? "Unknown Thread");
         }
 
-        [TestMethod]
-        public void TestFileServlet()
-        {
-            BaseSocket serverSocket = new BaseSocket(System.Net.Sockets.AddressFamily.InterNetwork);
-            serverSocket.Bind(System.Net.IPAddress.Loopback, 8080);
-            serverSocket.Listen(10);
+        //[TestMethod]
+        //public void TestFileServlet()
+        //{
+        //    BaseSocket serverSocket = new BaseSocket(System.Net.Sockets.AddressFamily.InterNetwork);
+        //    serverSocket.Bind(System.Net.IPAddress.Loopback, 8080);
+        //    serverSocket.Listen(10);
 
-            BaseSocket clientSocket = serverSocket.Accept();
-            FileServlet fileServlet = new FileServlet(".");
-            fileServlet.Exec(clientSocket);
-            clientSocket.Shutdown(System.Net.Sockets.SocketShutdown.Both);
-            clientSocket.Close();
-        }
+        //    BaseSocket clientSocket = serverSocket.Accept();
+        //    FileServlet fileServlet = new FileServlet(".");
+        //    fileServlet.Exec(clientSocket);
+        //    clientSocket.Shutdown(System.Net.Sockets.SocketShutdown.Both);
+        //    clientSocket.Close();
+        //}
     }
 }
