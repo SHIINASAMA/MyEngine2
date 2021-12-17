@@ -2,12 +2,12 @@
 {
     public class HttpRangeParser
     {
-        public LinkedList<HttpRange> HttpRanges { get; set; } = new();
+        public LinkedList<HttpRange> HttpRanges { get; set; }
 
         public HttpRangeParser(string rawString)
         {
-            var dataStr = rawString.Split('=')[1];
-            var rs = dataStr.Split(',');
+            HttpRanges = new();
+            var rs = rawString[6..].Split(',');
             int index = 0;
             foreach (string i in rs)
             {

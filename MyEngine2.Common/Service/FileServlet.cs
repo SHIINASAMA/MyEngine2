@@ -52,8 +52,8 @@ namespace MyEngine2.Common.Service
         /// <summary>
         /// 初始化通用响应
         /// </summary>
-        /// <returns></returns>
-        protected HttpResponse InitResponse()
+        /// <returns>初始化响应头</returns>
+        protected virtual HttpResponse InitResponse()
         {
             var response = new HttpResponse();
             response.SetHeader("Date", DateTime.Now.ToString("R"));
@@ -63,7 +63,12 @@ namespace MyEngine2.Common.Service
             return response;
         }
 
-        private void SendFile(BaseSocket socket, string path)
+        /// <summary>
+        /// 发送完整文件
+        /// </summary>
+        /// <param name="socket"></param>
+        /// <param name="path"></param>
+        protected void SendFile(BaseSocket socket, string path)
         {
             using FileStream fileStream = new(path, FileMode.Open, FileAccess.Read);
             int length;

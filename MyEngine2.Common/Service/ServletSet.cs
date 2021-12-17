@@ -8,6 +8,13 @@
         private ReaderWriterLockSlim ReaderWriterLockSlim = new();
 
         /// <summary>
+        /// 构造函数
+        /// </summary>
+        public ServletSet() : base(StringComparer.OrdinalIgnoreCase)
+        {
+        }
+
+        /// <summary>
         /// 注册 Servlet - 线程安全
         /// </summary>
         /// <param name="url">路径</param>

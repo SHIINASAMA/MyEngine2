@@ -35,18 +35,32 @@ namespace MyEngine2.Test.Common
             LoggerManager.Logger.Info(Thread.CurrentThread.Name ?? "Unknown Thread");
         }
 
-        //[TestMethod]
-        //public void TestFileServlet()
-        //{
-        //    BaseSocket serverSocket = new BaseSocket(System.Net.Sockets.AddressFamily.InterNetwork);
-        //    serverSocket.Bind(System.Net.IPAddress.Loopback, 8080);
-        //    serverSocket.Listen(10);
+        [TestMethod]
+        public void TestFileServlet()
+        {
+            BaseSocket serverSocket = new BaseSocket(System.Net.Sockets.AddressFamily.InterNetwork);
+            serverSocket.Bind(System.Net.IPAddress.Loopback, 8080);
+            serverSocket.Listen(10);
 
-        //    BaseSocket clientSocket = serverSocket.Accept();
-        //    FileServlet fileServlet = new FileServlet(".");
-        //    fileServlet.Exec(clientSocket);
-        //    clientSocket.Shutdown(System.Net.Sockets.SocketShutdown.Both);
-        //    clientSocket.Close();
-        //}
+            BaseSocket clientSocket = serverSocket.Accept();
+            FileServlet fileServlet = new FileServlet(new ServiceProfile.ServerProfile(), false);
+            fileServlet.Exec(clientSocket);
+            clientSocket.Shutdown(System.Net.Sockets.SocketShutdown.Both);
+            clientSocket.Close();
+        }
+
+        [TestMethod]
+        public void TestRangeFileServlet()
+        {
+            BaseSocket serverSocket = new BaseSocket(System.Net.Sockets.AddressFamily.InterNetwork);
+            serverSocket.Bind(System.Net.IPAddress.Loopback, 8080);
+            serverSocket.Listen(10);
+
+            BaseSocket clientSocket = serverSocket.Accept();
+            FileServlet fileServlet = new RangeFileServlet(new ServiceProfile.ServerProfile(), false);
+            fileServlet.Exec(clientSocket);
+            clientSocket.Shutdown(System.Net.Sockets.SocketShutdown.Both);
+            clientSocket.Close();
+        }
     }
 }

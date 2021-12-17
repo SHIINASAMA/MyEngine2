@@ -82,7 +82,7 @@
         /// <param name="value">值</param>
         public void SetHeader(string key, string value)
         {
-            Add(key, value);
+            base[key] = value;
         }
 
         /// <summary>

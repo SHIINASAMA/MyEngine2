@@ -6,10 +6,12 @@ namespace MyEngine2.Common.Service
     public class ServiceMain
     {
         private ServiceProfile ServiceProfile;
-        private BaseSocket? BaseSocket;
-        private ThreadPool? ThreadPool;
-        private ServletSet? ServletSet;
+        private BaseSocket BaseSocket;
+        private ThreadPool ThreadPool;
+        private ServletSet ServletSet; // 用户自定义的 Servlet
+        private BaseServlet FileServlet; // 系统用于传输文件的 Servlet
         private Thread AcceptThread;
+        private ReaderWriterLock ServletLock = new();
 
         #region LoggerWrapper
 
@@ -30,23 +32,32 @@ namespace MyEngine2.Common.Service
             ServiceProfile = serviceProfile;
 
             // 1.初始化日志管理器
-            InitLogger();
+            LoggerManager.InitLogger(ServiceProfile.Logger);
             Info("[OK] Logger");
 
             // 2.初始化服务器 Socket
-            if (InitSocket())
+            try
             {
+                BaseSocket = new(System.Net.Sockets.AddressFamily.InterNetwork);
+                BaseSocket.Bind(IPAddress.Parse(ServiceProfile.Server.Address), ServiceProfile.Server.Port);
+                Info(string.Format("[OK] Socket.Bind {0}:{1}", ServiceProfile.Server.Address, ServiceProfile.Server.Port));
+                BaseSocket.Listen(ServiceProfile.Server.Backlog);
+                Info(string.Format("[OK] Socket.Listen {0}", ServiceProfile.Server.Backlog));
                 Info("[OK] Socket");
             }
-            else
+            catch (Exception e)
             {
-                Fatal("[NO] Socket");
+                Fatal(string.Format("[NO] Socket {0}", e.Message));
                 Environment.Exit(-1);
                 return;
             }
 
             // 3.初始化线程池
-            InitThreadPool();
+            ThreadPool = new(
+                ServiceProfile.Server.ThreadPool.Name,
+                ServiceProfile.Server.ThreadPool.ThreadCount,
+                ServiceProfile.Server.ThreadPool.QueueLength
+                );
             Info(string.Format("[OK] ThreadPool Name:{0} Threads:{1} QueueLength:{2}",
                 ServiceProfile.Server.ThreadPool.Name,
                 ServiceProfile.Server.ThreadPool.ThreadCount,
@@ -55,7 +66,24 @@ namespace MyEngine2.Common.Service
             Info("[OK] ThreadPool");
 
             // 4.初始化服务集
-            InitServletSet();
+            ServletSet = new();
+            // 检测是否手动设置主页（HomePage）和未找到请求资源页面（NotFoundPage）
+            if (ServiceProfile.Server.HomePage.Enable)
+            {
+                Info(string.Format("HomePage    : {0}", ServiceProfile.Server.HomePage.Path));
+            }
+            if (ServiceProfile.Server.NotFoundPage.Enable)
+            {
+                Info(string.Format("NoFoundPage : {0}", ServiceProfile.Server.NotFoundPage.Path));
+            }
+            // 检测是否开启断点续传，设置对应 Servlet
+            if (ServiceProfile.Net.AcceptRanges)
+            {
+            }
+            else
+            {
+                FileServlet = new FileServlet(ServiceProfile.Server, ServiceProfile.Net.EnableKeepAlive);
+            }
             Info("[OK] ServletSet");
 
             // 5.初始化循环监听线程
@@ -73,55 +101,13 @@ namespace MyEngine2.Common.Service
             Info("[OK] AcceptThread Started");
         }
 
+        /// <summary>
+        /// 终止监听线程 - 非阻塞
+        /// </summary>
         public void StopAccept()
         {
             AcceptThread.Interrupt();
-        }
-
-        private void InitLogger()
-        {
-            LoggerManager.InitLogger(ServiceProfile.Logger);
-        }
-
-        private bool InitSocket()
-        {
-            try
-            {
-                BaseSocket = new(System.Net.Sockets.AddressFamily.InterNetwork);
-                BaseSocket.Bind(IPAddress.Parse(ServiceProfile.Server.Address), ServiceProfile.Server.Port);
-                Info(string.Format("[OK] Socket.Bind {0}:{1}", ServiceProfile.Server.Address, ServiceProfile.Server.Port));
-                BaseSocket.Listen(ServiceProfile.Server.Backlog);
-                Info(string.Format("[OK] Socket.Listen {0}", ServiceProfile.Server.Backlog));
-                return true;
-            }
-            catch (Exception e)
-            {
-                Fatal(string.Format("[NO] Socket {0}", e.Message));
-                return false;
-            }
-        }
-
-        private void InitThreadPool()
-        {
-            ThreadPool = new(
-                ServiceProfile.Server.ThreadPool.Name,
-                ServiceProfile.Server.ThreadPool.ThreadCount,
-                ServiceProfile.Server.ThreadPool.QueueLength
-                );
-        }
-
-        private void InitServletSet()
-        {
-            ServletSet = new();
-            // 检测是否手动设置主页（HomePage）和未找到请求资源页面（NotFoundPage）
-            if (ServiceProfile.Server.HomePage.Enable)
-            {
-                Info(string.Format("HomePage    : {0}", ServiceProfile.Server.HomePage.Path));
-            }
-            if (ServiceProfile.Server.NotFoundPage.Enable)
-            {
-                Info(string.Format("NoFoundPage : {0}", ServiceProfile.Server.NotFoundPage.Path));
-            }
+            ThreadPool.Shutdown();
         }
 
         private void MainLoop()
