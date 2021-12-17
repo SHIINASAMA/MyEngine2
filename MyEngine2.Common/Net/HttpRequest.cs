@@ -41,7 +41,7 @@
         /// <param name="version">Http 版本</param>
         /// <param name="rawUrl">Http 原始 Url</param>
         /// <param name="method">Http 方法</param>
-        public HttpRequest(string version, string rawUrl, HttpMethod method)
+        public HttpRequest(string version, string rawUrl, HttpMethod method) : base()
         {
             Version = version;
             RawUrl = rawUrl;

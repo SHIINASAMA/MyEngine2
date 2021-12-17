@@ -33,7 +33,7 @@
         /// <param name="version">Http 版本</param>
         /// <param name="stateCode">Http 状态码</param>
         /// <param name="description">Http 注释</param>
-        public HttpResponse(string version, string stateCode, string description)
+        public HttpResponse(string version, string stateCode, string description) : base()
         {
             Version = version;
             StateCode = stateCode;

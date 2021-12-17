@@ -5,6 +5,10 @@
     /// </summary>
     public class HttpPackage : Dictionary<string, string>
     {
+        public HttpPackage() : base(StringComparer.OrdinalIgnoreCase)
+        {
+        }
+
         public string Host
         {
             get { return GetHeader("Host"); }
@@ -65,8 +69,10 @@
             set { SetHeader("Date", value); }
         }
 
-        public HttpPackage()
+        public string Range
         {
+            get { return GetHeader("Range"); }
+            set { SetHeader("Range", value); }
         }
 
         /// <summary>

@@ -8,6 +8,13 @@ namespace MyEngine2.Common.Net
     public class QueryString : Dictionary<string, string>
     {
         /// <summary>
+        /// 构造函数
+        /// </summary>
+        public QueryString() : base(StringComparer.OrdinalIgnoreCase)
+        {
+        }
+
+        /// <summary>
         /// 资源地址
         /// </summary>
         public string Url { get; set; } = "/";
