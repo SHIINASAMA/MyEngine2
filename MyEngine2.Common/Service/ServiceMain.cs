@@ -8,10 +8,9 @@ namespace MyEngine2.Common.Service
         private ServiceProfile ServiceProfile;
         private BaseSocket BaseSocket;
         private ThreadPool ThreadPool;
-        private ServletSet ServletSet; // 用户自定义的 Servlet
+        private ServletSet ServletSet; // 用户自定义的 Servlet 集合
         private BaseServlet FileServlet; // 系统用于传输文件的 Servlet
         private Thread AcceptThread;
-        private ReaderWriterLock ServletLock = new();
 
         #region LoggerWrapper
 
@@ -79,6 +78,7 @@ namespace MyEngine2.Common.Service
             // 检测是否开启断点续传，设置对应 Servlet
             if (ServiceProfile.Net.AcceptRanges)
             {
+                FileServlet = new RangeFileServlet(ServiceProfile.Server, ServiceProfile.Net.EnableKeepAlive);
             }
             else
             {
@@ -88,6 +88,7 @@ namespace MyEngine2.Common.Service
 
             // 5.初始化循环监听线程
             AcceptThread = new(new ThreadStart(MainLoop));
+            AcceptThread.IsBackground = true;
             AcceptThread.Name = "AcceptThread";
             Info("[OK] AcceptThread");
         }
@@ -106,26 +107,49 @@ namespace MyEngine2.Common.Service
         /// </summary>
         public void StopAccept()
         {
-            AcceptThread.Interrupt();
+            BaseSocket.Close();
             ThreadPool.Shutdown();
         }
 
+        /// <summary>
+        /// 工作者主循环
+        /// </summary>
         private void MainLoop()
         {
             while (true)
             {
                 try
                 {
+                    BaseSocket clientSocket = BaseSocket.Accept();
+                    ThreadPool.Execute(SubThreadProc, clientSocket);
                 }
-                catch (ThreadInterruptedException e)
+                catch (System.Net.Sockets.SocketException e)
                 {
+                    Warn(e.Message);
+                    Info("Listening To Terminate");
                     break;
                 }
             }
         }
 
-        private void SubThreadProc()
+        /// <summary>
+        /// 线程池子线程任务
+        /// </summary>
+        /// <param name="argv">参数，此处为客户端套接字</param>
+        private void SubThreadProc(object? argv)
         {
+            try
+            {
+                if (argv != null)
+                {
+                    using BaseSocket socket = (BaseSocket)argv;
+                    FileServlet.Exec((BaseSocket)argv);
+                }
+            }
+            catch (Exception e)
+            {
+                Warn(e.Message);
+            }
         }
     }
 }

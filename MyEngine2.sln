@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyEngine2.Common", "MyEngin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyEngine2.Test.Common", "MyEngine2.Test.Common\MyEngine2.Test.Common.csproj", "{3BF0BC2A-BB74-4CB1-AAD8-A8C641F917DE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyEngine2.Entrance.Console", "MyEngine2.Entrance.Console\MyEngine2.Entrance.Console.csproj", "{25098526-258F-43B8-9371-E7DBD1972BCB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{3BF0BC2A-BB74-4CB1-AAD8-A8C641F917DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BF0BC2A-BB74-4CB1-AAD8-A8C641F917DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BF0BC2A-BB74-4CB1-AAD8-A8C641F917DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25098526-258F-43B8-9371-E7DBD1972BCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25098526-258F-43B8-9371-E7DBD1972BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25098526-258F-43B8-9371-E7DBD1972BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25098526-258F-43B8-9371-E7DBD1972BCB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
