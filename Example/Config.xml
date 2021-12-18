@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ServiceProfile>
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceProfile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <Server>
         <!-- 服务器名称 -->
         <Name>MyEngine2</Name>
@@ -47,6 +47,7 @@
             <!-- 日期格式 -->
             <DatePattern>HH:mm:ss</DatePattern>
         </ConsoleAppender>
+        <!-- 文件日志输出地 -->
         <FileAppender>
             <!-- 是否启用 -->
             <Enable>false</Enable>
