@@ -17,15 +17,16 @@
         /// </summary>
         public int QueueLength { get; }
 
-        // 任务队列
-        private Queue<Action> Tasks;
-
-        // 任务互斥锁
+        // 互斥量
         private Mutex Mutex = new();
+
+        // 任务队列
+        private Queue<KeyValuePair<Action<object?>, object?>> Tasks;
 
         // 线程组
         private LinkedList<Thread> Threads = new();
 
+        // 信号量
         private Semaphore Semaphore;
 
         /// <summary>
@@ -63,11 +64,11 @@
         /// <summary>
         /// 添加任务
         /// </summary>
-        /// <param name="action">任务</param>
-        public void Execute(Action action)
+        /// <param name="task">任务</param>
+        public void Execute(Action<object?> action, object? argv)
         {
             Semaphore.Release();
-            Tasks.Enqueue(action);
+            Tasks.Enqueue(new(action, argv));
         }
 
         /// <summary>
@@ -91,15 +92,20 @@
             {
                 if (Semaphore.WaitOne(2000))
                 {
-                    Action? action;
-                    if (Tasks.TryDequeue(out action))
+                    Mutex.WaitOne();
+                    KeyValuePair<Action<object?>, object?> task;
+                    if (!Tasks.TryDequeue(out task))
                     {
-                        if (action != null)
-                        {
-                            action();
-                        }
+                        continue;
+                    }
+                    Mutex.ReleaseMutex();
+
+                    if (task.Key != null)
+                    {
+                        task.Key(task.Value);
                     }
                 }
+                Thread.Sleep(0);
             }
         }
     }

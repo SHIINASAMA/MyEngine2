@@ -1,9 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MyEngine2.Common.Net;
 using MyEngine2.Common.Service;
-using System;
-using System.Diagnostics;
-using System.IO;
 using System.Threading;
 
 namespace MyEngine2.Test.Common
@@ -19,7 +16,7 @@ namespace MyEngine2.Test.Common
             {
                 try
                 {
-                    threadPool.Execute(ThreadProc);
+                    threadPool.Execute(ThreadProc, i);
                 }
                 catch (SemaphoreFullException ex)
                 {
@@ -30,9 +27,9 @@ namespace MyEngine2.Test.Common
             threadPool.Shutdown();
         }
 
-        public void ThreadProc()
+        public void ThreadProc(object? i)
         {
-            LoggerManager.Logger.Info(Thread.CurrentThread.Name ?? "Unknown Thread");
+            LoggerManager.Logger.Info(i.ToString());
         }
 
         [TestMethod]
