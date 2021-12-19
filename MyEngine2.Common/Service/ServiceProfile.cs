@@ -22,7 +22,7 @@ namespace MyEngine2.Common.Service
             public string Name { get; set; } = "MyEngine2";
 
             [XmlElement("Address")]
-            public string Address { get; set; } = "localhost";
+            public string Address { get; set; } = "127.0.0.1";
 
             [XmlElement("Port")]
             public int Port { get; set; } = 8080;

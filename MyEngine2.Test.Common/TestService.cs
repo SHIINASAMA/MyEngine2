@@ -1,7 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MyEngine2.Common.Net;
 using MyEngine2.Common.Service;
+using System.IO;
 using System.Threading;
+using System.Xml.Serialization;
 
 namespace MyEngine2.Test.Common
 {
@@ -58,6 +60,14 @@ namespace MyEngine2.Test.Common
             fileServlet.Exec(clientSocket);
             clientSocket.Shutdown(System.Net.Sockets.SocketShutdown.Both);
             clientSocket.Close();
+        }
+
+        [TestMethod]
+        public void TestXmlSerializer()
+        {
+            ServiceProfile profile = new();
+            XmlSerializer serializer = new(typeof(ServiceProfile));
+            serializer.Serialize(new FileStream("MyConfig.xml", FileMode.OpenOrCreate), profile);
         }
     }
 }

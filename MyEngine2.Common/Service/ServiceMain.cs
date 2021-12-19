@@ -14,15 +14,15 @@ namespace MyEngine2.Common.Service
 
         #region LoggerWrapper
 
-        private void Debug(string message) => LoggerManager.Logger.Debug(message);
+        private static void Debug(string message) => LoggerManager.Logger.Debug(message);
 
-        private void Info(string message) => LoggerManager.Logger.Info(message);
+        private static void Info(string message) => LoggerManager.Logger.Info(message);
 
-        private void Warn(string message) => LoggerManager.Logger.Warn(message);
+        private static void Warn(string message) => LoggerManager.Logger.Warn(message);
 
-        private void Error(string message) => LoggerManager.Logger.Error(message);
+        private static void Error(string message) => LoggerManager.Logger.Error(message);
 
-        private void Fatal(string message) => LoggerManager.Logger.Fatal(message);
+        private static void Fatal(string message) => LoggerManager.Logger.Fatal(message);
 
         #endregion LoggerWrapper
 
@@ -130,6 +130,7 @@ namespace MyEngine2.Common.Service
                     break;
                 }
             }
+            Thread.Sleep(0);
         }
 
         /// <summary>
