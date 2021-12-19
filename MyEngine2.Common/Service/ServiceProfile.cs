@@ -34,7 +34,7 @@ namespace MyEngine2.Common.Service
             public ThreadPoolProfile ThreadPool { get; set; } = new();
 
             [XmlElement("Root")]
-            public string Root { get; set; } = "/Web";
+            public string Root { get; set; } = "Web";
 
             [XmlElement("HomePage")]
             public PageProfile HomePage { get; set; } = new(false, "/index.html");

@@ -19,7 +19,7 @@
             <QueueLength>256</QueueLength>
         </ThreadPool>
         <!-- Web 根目录 -->
-        <Root>/Web</Root>
+        <Root>Web</Root>
         <!-- 手动指定主页 -->
         <HomePage>
             <!-- 是否启用 -->

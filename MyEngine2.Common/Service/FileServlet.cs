@@ -104,6 +104,13 @@ namespace MyEngine2.Common.Service
                     SendResponse(socket, response);
                 }
             }
+            else
+            {
+                LoggerManager.Logger.Info("Send 404 Response");
+                HttpResponse response = InitResponse();
+                response.AutoConfiguration("404");
+                SendResponse(socket, response);
+            }
         }
 
         /// <summary>
