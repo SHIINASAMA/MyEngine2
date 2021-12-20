@@ -92,13 +92,14 @@
             {
                 if (Semaphore.WaitOne(2000))
                 {
-                    Mutex.WaitOne();
                     KeyValuePair<Action<object?>, object?> task;
-                    if (!Tasks.TryDequeue(out task))
+                    lock (Mutex)
                     {
-                        continue;
+                        if (!Tasks.TryDequeue(out task))
+                        {
+                            continue;
+                        }
                     }
-                    Mutex.ReleaseMutex();
 
                     if (task.Key != null)
                     {

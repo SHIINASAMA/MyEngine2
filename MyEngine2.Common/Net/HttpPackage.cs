@@ -92,7 +92,14 @@
         /// <returns>值</returns>
         public string GetHeader(string key)
         {
-            return base[key] ?? "";
+            if (base.ContainsKey(key))
+            {
+                return base[key];
+            }
+            else
+            {
+                return "";
+            }
         }
     }
 }

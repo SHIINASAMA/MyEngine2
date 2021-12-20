@@ -25,43 +25,53 @@ namespace MyEngine2.Common.Service
             var response = new HttpResponse();
             response.SetHeader("Date", DateTime.Now.ToString("R"));
             response.SetHeader("Server", Profile.Name);
-            response.SetHeader("Connection", KeepAlive ? "KeepAlive" : "Close");
             response.SetHeader("Accept-Ranges", "Bytes");
             return response;
+        }
+
+        protected override void SendResponse(SocketContext context, HttpResponse response)
+        {
+            HttpHelper httpHelper = new(context.Socket);
+            response.SetHeader("Connection", KeepAlive && context.KeepAlive ? "Keep-Alive" : "Close");
+            httpHelper.WriteResponse(response);
+            // 请求次数加 1
+            context.Requested();
         }
 
         /// <summary>
         /// 请求区间格式错误响应 - 416
         /// </summary>
-        /// <param name="socket"></param>
-        protected void SendRangesInvalidFormat(BaseSocket socket)
+        /// <param name="context"></param>
+        protected void SendRangesInvalidFormat(SocketContext context)
         {
             HttpResponse response = InitResponse();
             response.AutoConfiguration("416");
+            SendResponse(context, response);
         }
 
         /// <summary>
         /// 请求区间越界响应 - 416
         /// </summary>
-        /// <param name="socket"></param>
-        protected void SendRequestedRangeNotSatisfiable(BaseSocket socket)
+        /// <param name="context"></param>
+        protected void SendRequestedRangeNotSatisfiable(SocketContext context)
         {
             HttpResponse response = InitResponse();
             response.AutoConfiguration("416");
+            SendResponse(context, response);
         }
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="socket"></param>
+        /// <param name="context"></param>
         /// <param name="request"></param>
-        public override void OnGet(BaseSocket socket, HttpRequest request)
+        public override void OnGet(SocketContext context, HttpRequest request)
         {
             string rangeString = request.GetHeader("Range");
             // 完整文件请求
             if (rangeString.Length == 0)
             {
-                base.OnGet(socket, request);
+                base.OnGet(context, request);
             }
             // 分块文件请求
             else
@@ -71,7 +81,7 @@ namespace MyEngine2.Common.Service
                 if (!(File.Exists(realPath) && AssertPath(realPath)))
                 {
                     LoggerManager.Logger.Warn(string.Format("Request File {0} Does Not Exists", request.Url));
-                    SendNotFound(socket);
+                    SendNotFound(context);
                     return;
                 }
 
@@ -86,14 +96,14 @@ namespace MyEngine2.Common.Service
                     if (ranges.Count == 0)
                     {
                         LoggerManager.Logger.Warn("Ranges Count Equal Zero");
-                        SendRangesInvalidFormat(socket);
+                        SendRangesInvalidFormat(context);
                         return;
                     }
                 }
                 catch (Exception)
                 {
                     LoggerManager.Logger.Warn("Ranges Invalid Format");
-                    SendRangesInvalidFormat(socket);
+                    SendRangesInvalidFormat(context);
                     return;
                 }
 
@@ -105,7 +115,7 @@ namespace MyEngine2.Common.Service
 
                     if (range.Start > range.End || range.End > fileInfo.Length)
                     {
-                        SendRequestedRangeNotSatisfiable(socket);
+                        SendRequestedRangeNotSatisfiable(context);
                         return;
                     }
 
@@ -130,13 +140,13 @@ namespace MyEngine2.Common.Service
                         HttpResponse response = InitResponse();
                         response.AutoConfiguration("206");
                         response.ContentLength = contentLength.ToString();
-                        SendResponse(socket, response);
+                        SendResponse(context, response);
                         isFirst = false;
                     }
                     else
                     {
                         string subheader = string.Format("Content-Range: {0}", range.ToString(fileInfo.Length));
-                        socket.WriteLine(subheader);
+                        context.Socket.WriteLine(subheader);
                     }
 
                     fileStream.Seek(range.Start, SeekOrigin.Begin);
@@ -146,7 +156,7 @@ namespace MyEngine2.Common.Service
                         if (sendCount > BufferSize)
                         {
                             fileStream.Read(buffer, 0, BufferSize);
-                            var l = socket.Send(buffer, BufferSize, System.Net.Sockets.SocketFlags.None);
+                            var l = context.Socket.Send(buffer, BufferSize, System.Net.Sockets.SocketFlags.None);
                             if (l == -1)
                             {
                                 break;
@@ -156,7 +166,7 @@ namespace MyEngine2.Common.Service
                         else
                         {
                             fileStream.Read(buffer, 0, (int)sendCount);
-                            var l = socket.Send(buffer, (int)sendCount, System.Net.Sockets.SocketFlags.None);
+                            var l = context.Socket.Send(buffer, (int)sendCount, System.Net.Sockets.SocketFlags.None);
                             if (l == -1)
                             {
                                 break;

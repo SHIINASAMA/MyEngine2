@@ -31,43 +31,56 @@ namespace MyEngine2.Common.Service
         /// <summary>
         /// 调用服务
         /// </summary>
-        /// <param name="socket">客户端 Socket</param>
-        public void Exec(BaseSocket socket)
+        /// <param name="context">客户端 Socket 上下文</param>
+        public void Exec(SocketContext context)
         {
-            HttpHelper httpHelper = new(socket);
+            HttpHelper httpHelper = new(context.Socket);
             HttpRequest? request = httpHelper.ReadRequest();
             if (request == null)
             {
                 throw new ServletException("HttpRequest 为空");
             }
-            OnRequest(socket, request);
+
+            // 若对方没有设置 KeepAlive 则之后关闭链接
+            if (request.GetHeader("Connection").ToUpper() == "KEEP-ALIVE")
+            {
+                context.KeepAlive = true;
+            }
+            else
+            {
+                context.KeepAlive = false;
+            }
+
+            OnRequest(context, request);
         }
 
         /// <summary>
         /// 发送响应
         /// </summary>
-        /// <param name="socket">客户端 Socket</param>
+        /// <param name="context">客户端 Socket 上下文</param>
         /// <param name="response">响应</param>
-        public void SendResponse(BaseSocket socket, HttpResponse response)
+        protected virtual void SendResponse(SocketContext context, HttpResponse response)
         {
-            HttpHelper httpHelper = new(socket);
+            HttpHelper httpHelper = new(context.Socket);
             httpHelper.WriteResponse(response);
+            // 请求次数加 1
+            context.Requested();
         }
 
-        private void OnRequest(BaseSocket socket, HttpRequest request)
+        private void OnRequest(SocketContext context, HttpRequest request)
         {
             switch (request.Method)
             {
                 case Net.HttpMethod.Get:
-                    OnGet(socket, request);
+                    OnGet(context, request);
                     break;
 
                 case Net.HttpMethod.Post:
-                    OnPost(socket, request);
+                    OnPost(context, request);
                     break;
 
                 case Net.HttpMethod.Nonsupport:
-                    OnNonsupport(socket, request);
+                    OnNonsupport(context, request);
                     break;
             }
         }
@@ -75,40 +88,40 @@ namespace MyEngine2.Common.Service
         /// <summary>
         /// 当请求方法为 GET 时执行，默认返回 405
         /// </summary>
-        /// <param name="socket">客户端套接字</param>
+        /// <param name="context">客户端套接字</param>
         /// <param name="request">请求</param>
-        public virtual void OnGet(BaseSocket socket, HttpRequest request)
+        public virtual void OnGet(SocketContext context, HttpRequest request)
         {
             HttpResponse response = new();
             response.StateCode = "405";
             response.Description = HttpState.Description["405"];
-            SendResponse(socket, response);
+            SendResponse(context, response);
         }
 
         /// <summary>
         /// 当请求方法为 POST 时执行，默认返回 405
         /// </summary>
-        /// <param name="socket">客户端套接字</param>
+        /// <param name="context">客户端套接字</param>
         /// <param name="request">请求</param>
-        public virtual void OnPost(BaseSocket socket, HttpRequest request)
+        public virtual void OnPost(SocketContext context, HttpRequest request)
         {
             HttpResponse response = new();
             response.StateCode = "405";
             response.Description = HttpState.Description["405"];
-            SendResponse(socket, response);
+            SendResponse(context, response);
         }
 
         /// <summary>
         /// 当请求方法为 Nonsupport 时执行，默认返回 501
         /// </summary>
-        /// <param name="socket">客户端套接字</param>
+        /// <param name="context">客户端套接字</param>
         /// <param name="request">请求</param>
-        public virtual void OnNonsupport(BaseSocket socket, HttpRequest request)
+        public virtual void OnNonsupport(SocketContext context, HttpRequest request)
         {
             HttpResponse response = new();
             response.StateCode = "501";
             response.Description = HttpState.Description["501"];
-            SendResponse(socket, response);
+            SendResponse(context, response);
         }
     }
 }

@@ -58,9 +58,17 @@ namespace MyEngine2.Common.Service
             var response = new HttpResponse();
             response.SetHeader("Date", DateTime.Now.ToString("R"));
             response.SetHeader("Server", Profile.Name);
-            response.SetHeader("Connection", KeepAlive ? "KeepAlive" : "Close");
             response.SetHeader("Accept-Ranges", "None");
             return response;
+        }
+
+        protected override void SendResponse(SocketContext context, HttpResponse response)
+        {
+            HttpHelper httpHelper = new(context.Socket);
+            response.SetHeader("Connection", KeepAlive && context.KeepAlive ? "Keep-Alive" : "Close");
+            httpHelper.WriteResponse(response);
+            // 请求次数加 1
+            context.Requested();
         }
 
         /// <summary>
@@ -82,26 +90,27 @@ namespace MyEngine2.Common.Service
         /// <summary>
         /// 发送 404 报文
         /// </summary>
-        /// <param name="socket">客户端套接字</param>
-        protected void SendNotFound(BaseSocket socket)
+        /// <param name="context">客户端 Socket 上下文</param>
+        protected void SendNotFound(SocketContext context)
         {
             if (Profile.NotFoundPage.Enable)
             {
-                if (File.Exists(Profile.NotFoundPage.Path))
+                string realPath = Profile.Root + Profile.NotFoundPage.Path;
+                if (File.Exists(realPath))
                 {
                     LoggerManager.Logger.Info(string.Format("Send Custom 404 Page {0}", Profile.NotFoundPage.Path));
                     HttpResponse response = InitResponse();
                     response.AutoConfiguration("404");
-                    response.ContentLength = new FileInfo(Profile.NotFoundPage.Path).Length.ToString();
-                    SendResponse(socket, response);
-                    SendFile(socket, Profile.NotFoundPage.Path);
+                    response.ContentLength = new FileInfo(realPath).Length.ToString();
+                    SendResponse(context, response);
+                    SendFile(context.Socket, realPath);
                 }
                 else
                 {
-                    LoggerManager.Logger.Warn(string.Format("404 Page {0} Does Not Exists, Use Default Response"));
+                    LoggerManager.Logger.Warn(string.Format("404 Page {0} Does Not Exists, Use Default Response", Profile.NotFoundPage.Path));
                     HttpResponse response = InitResponse();
                     response.AutoConfiguration("404");
-                    SendResponse(socket, response);
+                    SendResponse(context, response);
                 }
             }
             else
@@ -109,35 +118,36 @@ namespace MyEngine2.Common.Service
                 LoggerManager.Logger.Info("Send 404 Response");
                 HttpResponse response = InitResponse();
                 response.AutoConfiguration("404");
-                SendResponse(socket, response);
+                SendResponse(context, response);
             }
         }
 
         /// <summary>
         /// 请求整个文件
         /// </summary>
-        /// <param name="socket">客户端 Socket</param>
+        /// <param name="context">客户端 Socket 上下文</param>
         /// <param name="request">请求</param>
-        public override void OnGet(BaseSocket socket, HttpRequest request)
+        public override void OnGet(SocketContext context, HttpRequest request)
         {
             string realPath = Profile.Root + request.Url;
 
             // 请求路径为根路径 并且 设置了主页面
             if (ComparePath(Profile.Root, realPath) && Profile.HomePage.Enable)
             {
-                if (File.Exists(Profile.HomePage.Path))
+                string homePagePath = Profile.Root + Profile.HomePage.Path;
+                if (File.Exists(homePagePath))
                 {
                     LoggerManager.Logger.Info(string.Format("Request Custom Home Page {0} ", Profile.HomePage.Path));
                     HttpResponse response = InitResponse();
                     response.AutoConfiguration("200");
-                    response.ContentLength = new FileInfo(Profile.HomePage.Path).Length.ToString();
-                    SendResponse(socket, response);
-                    SendFile(socket, Profile.HomePage.Path);
+                    response.ContentLength = new FileInfo(homePagePath).Length.ToString();
+                    SendResponse(context, response);
+                    SendFile(context.Socket, homePagePath);
                 }
                 else
                 {
-                    LoggerManager.Logger.Warn(string.Format("Request Custom Home Page '{0}' Does Not Exists"));
-                    SendNotFound(socket);
+                    LoggerManager.Logger.Warn(string.Format("Request Custom Home Page '{0}' Does Not Exists", Profile.HomePage.Path));
+                    SendNotFound(context);
                 }
             }
             // 请求普通文件
@@ -147,14 +157,14 @@ namespace MyEngine2.Common.Service
                 HttpResponse response = InitResponse();
                 response.AutoConfiguration("200");
                 response.ContentLength = new FileInfo(realPath).Length.ToString();
-                SendResponse(socket, response);
-                SendFile(socket, realPath);
+                SendResponse(context, response);
+                SendFile(context.Socket, realPath);
             }
             // 404
             else
             {
                 LoggerManager.Logger.Warn(string.Format("Request File {0} Does Not Exists", request.Url));
-                SendNotFound(socket);
+                SendNotFound(context);
             }
         }
     }

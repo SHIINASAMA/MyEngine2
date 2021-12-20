@@ -38,7 +38,7 @@ namespace MyEngine2.Common.Net
             else
             {
                 // 无查询字符串 - 退出
-                Url = rawUrl;
+                Url = PercentDecoder.Decode(rawUrl);
                 return;
             }
 

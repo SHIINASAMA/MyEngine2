@@ -29,6 +29,7 @@ namespace MyEngine2.Common.Service
         public ServiceMain(ServiceProfile serviceProfile)
         {
             ServiceProfile = serviceProfile;
+            Thread.CurrentThread.Name = "ServiceMain";
 
             // 1.初始化日志管理器
             LoggerManager.InitLogger(ServiceProfile.Logger);
@@ -143,8 +144,18 @@ namespace MyEngine2.Common.Service
             {
                 if (argv != null)
                 {
-                    using BaseSocket socket = (BaseSocket)argv;
-                    FileServlet.Exec((BaseSocket)argv);
+                    BaseSocket socket = (BaseSocket)argv;
+                    socket.ReceiveTimeout = ServiceProfile.Net.ReceiveTimeOut;
+                    socket.SendTimeout = ServiceProfile.Net.SendTimeOut;
+                    socket.MaxHeaderLength = ServiceProfile.Net.MaxHeaderLength;
+                    socket.MaxHeadersLength = ServiceProfile.Net.MaxHeadersLength;
+
+                    //todo SocketContext 包装 BaseSocket
+                    using SocketContext context = new(socket);
+                    do
+                    {
+                        FileServlet.Exec(context);
+                    } while (context.Times <= ServiceProfile.Net.MaxRequestTimes && context.KeepAlive);
                 }
             }
             catch (Exception e)
